@@ -3,5 +3,16 @@ node_js:
   - '13.8.0'
   - '12'
   - '10'
+jobs:
+  include:
+    - name: lsif index
+      script:
+        - lsif-tsc -p .
+        - ./src lsif upload
+install:
+  - npm i
+  - npm install -g @sourcegraph/lsif-tsc
+  - curl -L https://github.com/sourcegraph/src-cli/releases/download/3.10.13/src_linux_amd64 -o ./src
+  - chmod +x ./src
 after_success:
   - './node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls'
