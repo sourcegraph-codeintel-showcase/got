@@ -1,8 +1,16 @@
 language: node_js
-node_js:
-  - '14'
-  - '13'
-  - '12'
-  - '10'
-after_success:
-  - './node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls'
+
+install:
+  - npm install -g @sourcegraph/lsif-tsc@0.6.0
+  - curl -L https://github.com/sourcegraph/src-cli/releases/download/3.16.0/src_linux_amd64 -o ./src
+  - chmod +x ./src
+  - npm install
+
+jobs:
+  include:
+    - name: Index and upload LSIF data to sourcegraph.com
+      os: linux
+      node_js: "13"
+      script:
+        - lsif-tsc -p .
+        - ./src lsif upload -no-progress
